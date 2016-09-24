@@ -4,16 +4,17 @@ public class FlashMain {
 	public static void main(String[] args) {
 		Scanner console = new Scanner(System.in);
 		
-		String question = "What is 7 + 3?";
-		int answer = 10;
+		FlashcardSequencer practice = new FlashcardSequencer();
 		
-		System.out.println(question);
-		int response = console.nextInt();
-		
-		while (response != answer)	{
-			System.out.println("Incorrect. Try again.");
-			response = console.nextInt();
+		while (practice.hasNext()) {
+			Flashcard flashcard = practice.nextFlashcard();
+			System.out.println(flashcard.getQuestion());
+			String response = console.next();
+			while (flashcard.validateAnswer(response) == false) {
+				System.out.println("Incorrect. Try again.");
+				response = console.next();
+			}
+			System.out.println("Correct!");
 		}
-		System.out.println("Correct!");
 	}
 }
