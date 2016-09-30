@@ -11,6 +11,7 @@ public class FlashcardSequencer {
 	}
 	
 	private ArrayList<Flashcard> populateDeck() {
+		// remove
 		this.flashcardDeck.add(new Flashcard("What is 7 + 1?", "8"));
 		this.flashcardDeck.add(new Flashcard("What is 10 * 4?", "40"));
 		this.flashcardDeck.add(new Flashcard("What is 8 + 2?", "10"));
@@ -19,6 +20,7 @@ public class FlashcardSequencer {
 	}
 	
 	public Flashcard nextFlashcard() {
+		// select random flashcard from database
 		int index = this.r.nextInt(this.flashcardDeck.size());
 		return this.flashcardDeck.get(index);
 	}
