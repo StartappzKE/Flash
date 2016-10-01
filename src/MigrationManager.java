@@ -1,6 +1,4 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.prefs.Preferences;
@@ -19,35 +17,35 @@ public class MigrationManager {
 	}
 	
 	private static void performFirstMigration() {
-		// create db tables
 		String decks = "CREATE TABLE DECK ("
-                     + "DeckID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, "
+                     + "DeckID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                      + "DeckName VARCHAR(100) NOT NULL, "
                      + "DeckDescr VARCHAR(500))";
 		String flashcards = "CREATE TABLE FLASHCARD ("
-                + "FlashcardID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, "
-                + "DeckID INT NOT NULL, "
+                + "FlashcardID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                + "DeckID INTEGER NOT NULL, "
                 // + "FOREIGN KEY(DeckID) REFERENCES DECK(DeckId), "
                 + "Question VARCHAR(100) NOT NULL, " 
                 + "Answer VARCHAR(100) NOT NULL)";
 		String sessions = "CREATE TABLE SESSION ("
-                + "SessionID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, "
-                + "DeckID INT NOT NULL, "
+                + "SessionID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                + "DeckID INTEGER NOT NULL, "
                 // + "FOREIGN KEY(DeckID) REFERENCES DECK(DeckId), "
-                + "Size INT NOT NULL, " 
+                + "Size INTEGER NOT NULL, " 
                 + "BeginDate DATETIME NOT NULL, "
                 + "EndDate DATETIME)";
 		String answerHistory = "CREATE TABLE ANSWER_HISTORY ("
-                + "Answer_historyID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, "
-                + "SessionID INT NOT NULL, "
+                + "Answer_historyID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                + "SessionID INTEGER NOT NULL, "
                 // + "FOREIGN KEY(SessionID) REFERENCES SESSION(SessionId), "
-                + "FlashcardID INT NOT NULL, "
+                + "FlashcardID INTEGER NOT NULL, "
                 // + "FOREIGN KEY(FlashcardID) REFERENCES FLASHCARD(FlashcardId), "
                 + "TimeToCorrect DOUBLE NOT NULL, "
                 + "FirstAttemptCorrect BOOLEAN NOT NULL, "
                 + "AnsweredAt DATETIME NOT NULL)";
 		
-		Connection connection = MigrationManager.getDatabaseConnection();
+		Connection connection = DBManager.getDatabaseConnection();
+		
 		try {
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);
@@ -61,33 +59,7 @@ public class MigrationManager {
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		} finally {
-			MigrationManager.closeDatabaseConnection(connection);
-		}
-	}
-	
-	private static Connection getDatabaseConnection() {
-		Connection connection = null;
-		try {
-			// create a database connection
-			connection = DriverManager.getConnection("jdbc:sqlite:MemoryFlashDB.db");
-		}
-		catch(SQLException e) {
-			// if the error message is "out of memory", 
-			// it probably means no database file is found
-			System.err.println(e.getMessage());
-		}
-		
-		return connection;
-	}
-	
-	private static void closeDatabaseConnection(Connection connection) {
-		try {
-			if(connection != null)
-				connection.close();
-		}
-		catch(SQLException e) {
-			// connection close failed.
-			System.err.println(e);
+			DBManager.closeDatabaseConnection(connection);
 		}
 	}
 	

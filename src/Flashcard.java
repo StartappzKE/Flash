@@ -1,4 +1,3 @@
-
 public class Flashcard {
 	private String question;
 	private String answer;
@@ -10,6 +9,10 @@ public class Flashcard {
 	
 	public String getQuestion() {
 		return this.question;
+	}	
+	
+	public String getAnswer() {
+		return this.answer;
 	}	
 	
 	public boolean validateAnswer(String response) {
