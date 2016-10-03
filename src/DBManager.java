@@ -1,9 +1,17 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DBManager {
-	public static Connection getDatabaseConnection() {
+	private Connection connection;
+	
+	public DBManager() {
+		this.connection = DBManager.getDatabaseConnection();
+	}
+	
+	private static Connection getDatabaseConnection() {
 		Connection connection = null;
 		try {
 			// create a database connection
@@ -18,14 +26,55 @@ public class DBManager {
 		return connection;
 	} 
 	
-	public static void closeDatabaseConnection(Connection connection) {
+	public void closeDatabaseConnection() {
 		try {
-			if(connection != null)
-				connection.close();
+			if (this.connection != null) {
+				this.connection.close();
+			}
 		}
 		catch(SQLException e) {
 			// connection close failed.
 			System.err.println(e);
 		}
+	}
+	
+	public void execute(String query) {
+		if (this.checkIfNull()) {
+			return;
+		}
+		
+		try {
+			Statement statement = this.connection.createStatement();
+			statement.setQueryTimeout(30);
+			statement.execute(query);
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		} 
+	}
+	
+	public ResultSet query(String query) {
+		if (this.checkIfNull()) {
+			return null;
+		}
+		
+		ResultSet rs = null;
+		try {
+			Statement statement = this.connection.createStatement();
+			rs = statement.executeQuery(query);
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return rs;
+	}
+	
+	private boolean checkIfNull() {
+		boolean isNull = false;
+		if (this.connection == null) { 
+			System.out.println("No database connection");
+			isNull = true;
+		}
+		
+		return isNull;
 	}
 }

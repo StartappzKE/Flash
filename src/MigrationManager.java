@@ -44,23 +44,16 @@ public class MigrationManager {
                 + "FirstAttemptCorrect BOOLEAN NOT NULL, "
                 + "AnsweredAt DATETIME NOT NULL)";
 		
-		Connection connection = DBManager.getDatabaseConnection();
+		DBManager db = new DBManager();
 		
-		try {
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);
-			
-			statement.execute(decks);
-			statement.execute(flashcards);
-			statement.execute(sessions);
-			statement.execute(answerHistory);
-			
-			MigrationManager.updateMigrationsCompletedTo(1);
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		} finally {
-			DBManager.closeDatabaseConnection(connection);
-		}
+		db.execute(decks);
+		db.execute(flashcards);
+		db.execute(sessions);
+		db.execute(answerHistory);
+		
+		MigrationManager.updateMigrationsCompletedTo(1);
+		
+		db.closeDatabaseConnection();
 	}
 	
 	private static void updateMigrationsCompletedTo(int value) {
